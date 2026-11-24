@@ -448,6 +448,7 @@ def test_streamlit_app_switch_3_models_and_predict(metadata: dict) -> None:
 
         rendered = _collect_all_rendered_text(at)
         assert ("µg/m³" in rendered) or ("ug/m3" in rendered.lower()) or ("pm2.5" in rendered.lower())
+        assert "Variables Derivadas Automáticamente" not in rendered
 
 
 def test_streamlit_app_invalid_input_shows_error_cleanly() -> None:

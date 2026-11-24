@@ -63,16 +63,6 @@ MESES_ES: dict[int, str] = {
     12: "Diciembre",
 }
 
-DIAS_SEMANA_ES: dict[int, str] = {
-    0: "Lunes",
-    1: "Martes",
-    2: "Miércoles",
-    3: "Jueves",
-    4: "Viernes",
-    5: "Sábado",
-    6: "Domingo",
-}
-
 EPA_BANDS: list[dict[str, Any]] = [
     {
         "categoria": "Buena",
@@ -322,18 +312,6 @@ def _normalize_features_table(metadata: dict[str, Any]) -> pd.DataFrame:
         )
 
     return pd.DataFrame(rows)
-
-
-def _get_eng_value(eng: dict[str, Any], candidates: tuple[str, ...], default: Any = None) -> Any:
-    """Obtiene una característica derivada admitiendo snake_case o CamelCase."""
-    for key in candidates:
-        if key in eng:
-            return eng[key]
-    lower_eng = {str(k).lower(): v for k, v in eng.items()}
-    for key in candidates:
-        if key.lower() in lower_eng:
-            return lower_eng[key.lower()]
-    return default
 
 
 # ---------------------------------------------------------------------------
@@ -1113,55 +1091,6 @@ def _render_tab_prediccion(metadata: dict[str, Any], _modelos_cargados: dict[str
             )
 
         _render_air_quality_visual(pm25_pred, calidad)
-
-        # Características derivadas por ingeniería determinística
-        st.markdown("#### Variables Derivadas Automáticamente (`crear_caracteristicas`)")
-        eng = res_activo.get("engineered_features", {})
-        dow_val = _get_eng_value(eng, ("day_of_week", "DayOfWeek"), 0)
-        wknd_val = _get_eng_value(eng, ("is_weekend", "IsWeekend"), 0)
-        heat_val = _get_eng_value(eng, ("is_heating_season", "IsHeatingSeason"), 0)
-        diff_val = _get_eng_value(
-            eng,
-            ("temp_dewp_diff", "TempDewpDiff"),
-            float(saved_datos["TEMP"]) - float(saved_datos["DEWP"]),
-        )
-        prec_val = _get_eng_value(
-            eng,
-            ("is_precipitating", "IsPrecipitating"),
-            int(float(saved_datos["Ir"]) > 0 or float(saved_datos["Is"]) > 0),
-        )
-
-        dia_nombre = DIAS_SEMANA_ES.get(int(dow_val), str(dow_val))
-        df_eng_view = pd.DataFrame(
-            [
-                {
-                    "Característica Derivada": "Día de la semana (DayOfWeek / day_of_week)",
-                    "Valor Calculado": f"{dia_nombre} ({int(dow_val)})",
-                    "Significado Físico / Urbano": "Captura variaciones semanales de tráfico e industria (0 = Lunes ... 6 = Domingo).",
-                },
-                {
-                    "Característica Derivada": "Fin de semana (IsWeekend / is_weekend)",
-                    "Valor Calculado": "Sí (1)" if int(wknd_val) == 1 else "No (0)",
-                    "Significado Físico / Urbano": "Distingue sábados y domingos frente a jornadas laborales.",
-                },
-                {
-                    "Característica Derivada": "Temporada de calefacción (IsHeatingSeason / is_heating_season)",
-                    "Valor Calculado": "Activa (1)" if int(heat_val) == 1 else "Inactiva (0)",
-                    "Significado Físico / Urbano": "Periodo oficial invernal (15 nov – 15 mar); eleva el promedio de PM2.5 un +22.2% en Pekín.",
-                },
-                {
-                    "Característica Derivada": "Depresión del punto de rocío (TEMP − DEWP / temp_dewp_diff)",
-                    "Valor Calculado": f"{float(diff_val):.1f} °C",
-                    "Significado Físico / Urbano": "Proxy de sequedad del aire (r = -0.4391 con PM2.5; valores cercanos a 0 °C indican alta humedad y niebla).",
-                },
-                {
-                    "Característica Derivada": "Presencia de precipitación (is_precipitating)",
-                    "Valor Calculado": "Con lluvia o nieve (1)" if int(prec_val) == 1 else "Sin precipitación (0)",
-                    "Significado Físico / Urbano": "Indica deposición húmeda activa (Ir > 0 o Is > 0).",
-                },
-            ]
-        )
-        st.dataframe(df_eng_view, width="stretch", hide_index=True)
 
         # Comparación entre los 3 mejores modelos
         st.markdown("#### Comparación en Vivo entre los 3 Mejores Modelos")
