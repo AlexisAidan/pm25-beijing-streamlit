@@ -21,9 +21,10 @@ Aplicación web interactiva desarrollada en **Python** y **Streamlit** para esti
 
 ## Enlace Público de la Aplicación en Producción
 
-La aplicación se encuentra preparada y configurada para acceso público directo sin necesidad de instalar dependencias locales a través de **Streamlit Community Cloud**:
+La aplicación se encuentra desplegada en producción para acceso público directo desde cualquier navegador —sin necesidad de instalar dependencias locales— a través de **Streamlit Community Cloud**:
 
-- **URL pública de despliegue:** *(Disponible en Streamlit Community Cloud tras publicar el repositorio en GitHub: `https://<tu-subdominio>.streamlit.app`)*
+- **URL pública de despliegue:** [https://pm25-beijing-app-gchzkpnreicekvgxkwamwx.streamlit.app/](https://pm25-beijing-app-gchzkpnreicekvgxkwamwx.streamlit.app/)
+- **Repositorio público en GitHub:** [https://github.com/AlexisAidan/pm25-beijing-streamlit](https://github.com/AlexisAidan/pm25-beijing-streamlit)
 - **Archivo de entrada configurado:** `app.py`
 - **Versión de Python en la nube:** `3.13` (definida en `.python-version`)
 
